@@ -2,6 +2,10 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <LangVersion>preview</LangVersion>
+    <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
+    <AnalysisLevel>latest</AnalysisLevel>
   </PropertyGroup>
 
 </Project>
