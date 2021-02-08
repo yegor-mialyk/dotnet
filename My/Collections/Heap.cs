@@ -20,7 +20,9 @@ namespace My.Collections
         private const int DefaultCapacity = 8;
         private const uint MaxArrayLength = 0x7feffff;
 
-        private static readonly T[] emptyArray = new T[0]; // ReSharper disable InconsistentNaming for serialization
+        private static readonly T[] emptyArray = new T[0];
+
+        // ReSharper disable InconsistentNaming for serialization
         internal T[] _items;
         internal int _size;
         internal readonly HeapType _heapType;
