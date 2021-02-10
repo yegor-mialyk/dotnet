@@ -15,7 +15,7 @@ using System.Runtime.CompilerServices;
 namespace My.Collections
 {
     [Serializable]
-    public class Heap<T> : IList<T>, IReadOnlyList<T>
+    public class Heap<T> : ICollection<T>
     {
         private const int DefaultCapacity = 8;
         private const uint MaxArrayLength = 0x7feffff;
@@ -117,16 +117,6 @@ namespace My.Collections
 
                 return _items[index];
             }
-
-            set
-            {
-                if ((uint)index >= (uint)_size)
-                    throw new ArgumentOutOfRangeException(nameof(index));
-
-                _items[index] = value;
-
-                Heapify();
-            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -177,39 +167,12 @@ namespace My.Collections
             return Array.IndexOf(_items, item, 0, _size);
         }
 
-        public void Insert(int index, T item)
-        {
-            if ((uint)index > (uint)_size)
-                throw new ArgumentOutOfRangeException(nameof(index));
-
-            if (_size == _items.Length)
-                EnsureCapacity(_size + 1);
-
-            if (index < _size)
-                Array.Copy(_items, index, _items, index + 1, _size - index);
-
-            _items[index] = item;
-            _size++;
-
-            Heapify();
-        }
-
         public bool Remove(T item)
         {
             var index = IndexOf(item);
 
             if (index < 0)
                 return false;
-
-            RemoveAt(index);
-
-            return true;
-        }
-
-        public void RemoveAt(int index)
-        {
-            if ((uint)index >= (uint)_size)
-                throw new ArgumentOutOfRangeException(nameof(index));
 
             _size--;
 
@@ -220,6 +183,8 @@ namespace My.Collections
 
             if (index < _size)
                 Heapify();
+
+            return true;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -247,19 +212,14 @@ namespace My.Collections
 
                     _size += count;
 
+                    Heapify();
+
                     break;
                 default:
                     foreach (var item in enumerable)
                         Add(item);
                     break;
             }
-
-            Heapify();
-        }
-
-        public int BinarySearch(T item)
-        {
-            return Array.BinarySearch(_items, 0, _size, item, _comparer);
         }
 
         private void EnsureCapacity(int capacity)
@@ -276,15 +236,6 @@ namespace My.Collections
                 newCapacity = capacity;
 
             Capacity = newCapacity;
-        }
-
-        public void Sort()
-        {
-            if (_heapType == HeapType.Max)
-                throw new InvalidOperationException("Max Heap cannot be sorted.");
-
-            if (_size > 1)
-                Array.Sort(_items, 0, _size, _comparer);
         }
 
         public T[] ToArray()
@@ -310,12 +261,6 @@ namespace My.Collections
             return _items.AsSpan();
         }
 
-        public void Heapify()
-        {
-            for (var i = _size / 2 - 1; i >= 0; i--)
-                ShiftDown(i);
-        }
-
         public T Peek()
         {
             if (_size == 0)
@@ -339,7 +284,13 @@ namespace My.Collections
             return top;
         }
 
-        private void ShiftUp(int index)
+        protected void Heapify()
+        {
+            for (var i = _size / 2 - 1; i >= 0; i--)
+                ShiftDown(i);
+        }
+
+        protected void ShiftUp(int index)
         {
             while (true)
             {
@@ -359,7 +310,7 @@ namespace My.Collections
             }
         }
 
-        private void ShiftDown(int index)
+        protected void ShiftDown(int index)
         {
             while (true)
             {
@@ -383,7 +334,7 @@ namespace My.Collections
             }
         }
 
-        private int Compare(int index1, int index2)
+        protected int Compare(int index1, int index2)
         {
             return _comparer.Compare(_items[index1], _items[index2]) * (int)_heapType;
         }
