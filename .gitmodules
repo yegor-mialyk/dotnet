@@ -1,0 +1,3 @@
+[submodule "DbContextScope"]
+	path = DbContextScope
+	url = https://github.com/yegor-mialyk/DbContextScope.git
