@@ -8,13 +8,14 @@
 
 using System;
 using System.Collections.Generic;
-using My.Data.DomainModel;
 using EntityFrameworkCore.DbContextScope;
 using Microsoft.EntityFrameworkCore;
+using My.Data.DomainModel;
 
 namespace My.Data.Repository
 {
-    public class GenericRepository<T, TDbContext> : IRepository<T> where T : class, IDomainObject where TDbContext : DbContext
+    public class GenericRepository<TEntity, TKey, TDbContext> : IRepository<TEntity, TKey>
+        where TEntity : class, IDomainObject<TKey> where TDbContext : DbContext
     {
         private readonly IAmbientDbContextLocator _ambientDbContextLocator;
 
@@ -30,37 +31,38 @@ namespace My.Data.Repository
                 var dbContext = _ambientDbContextLocator.Get<TDbContext>();
 
                 if (dbContext == null)
-                    throw new InvalidOperationException("No ambient DbContext found. The repository method has been called outside of the DbContextScope.");
+                    throw new InvalidOperationException(
+                        "No ambient DbContext found. The repository method has been called outside of the DbContextScope.");
 
                 return dbContext;
             }
         }
 
-        protected virtual DbSet<T> DbSet => DbContext.Set<T>();
+        protected virtual DbSet<TEntity> DbSet => DbContext.Set<TEntity>();
 
-        public virtual T GetById(int id)
+        public virtual TEntity GetById(TKey id)
         {
             return DbSet.Find(id);
         }
 
-        public virtual void Clear()
-        {
-            DbSet.RemoveRange(DbSet);
-        }
-
-        public virtual IEnumerable<T> Get()
+        public virtual IEnumerable<TEntity> Get()
         {
             return DbSet;
         }
 
-        public virtual void Add(T entity)
+        public virtual void Add(TEntity entity)
         {
             DbSet.Add(entity);
         }
 
-        public virtual void Update(T entity)
+        public virtual void AddRange(IEnumerable<TEntity> entities)
         {
-            if (entity.Id == 0)
+            DbSet.AddRange(entities);
+        }
+        
+        public virtual void Update(TEntity entity)
+        {
+            if (EqualityComparer<TKey>.Default.Equals(entity.Id, default))
             {
                 Add(entity);
                 return;
@@ -72,7 +74,7 @@ namespace My.Data.Repository
             DbContext.Entry(entity).State = EntityState.Modified;
         }
 
-        public virtual void Delete(T entity)
+        public virtual void Delete(TEntity entity)
         {
             if (DbContext.Entry(entity).State == EntityState.Detached)
                 DbSet.Attach(entity);

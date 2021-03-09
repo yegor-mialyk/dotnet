@@ -11,15 +11,16 @@ using My.Data.DomainModel;
 
 namespace My.Data.Repository
 {
-    public interface IRepository<T> where T : class, IDomainObject
+    public interface IRepository<TEntity, in TKey> where TEntity : class, IDomainObject<TKey>
     {
-        T GetById(int id);
+        TEntity GetById(TKey id);
 
-        IEnumerable<T> Get();
+        IEnumerable<TEntity> Get();
 
-        void Add(T entity);
-        void Update(T entity);
-        void Delete(T entity);
-        void Clear();
+        void Add(TEntity entity);
+        void AddRange(IEnumerable<TEntity> entities);
+
+        void Update(TEntity entity);
+        void Delete(TEntity entity);
     }
 }

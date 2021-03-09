@@ -8,8 +8,8 @@
 
 namespace My.Data.DomainModel
 {
-    public interface IDomainObject
+    public interface IDomainObject<TKey>
     {
-        int Id { get; set; }
+        TKey Id { get; set; }
     }
 }
