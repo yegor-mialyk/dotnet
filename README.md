@@ -1,4 +1,4 @@
-# My .NET Core Libraries
+# My .NET 5+ Libraries
 
 [![License](https://img.shields.io/badge/License-MIT-brightgreen.svg?style=plastic)](LICENSE)
 [![Issues](https://img.shields.io/github/issues-raw/yegor-mialyk/dotnet.svg?style=plastic)](https://github.com/yegor-mialyk/dotnet/issues)

@@ -8,7 +8,7 @@
 
 using System;
 using System.Collections.Generic;
-using CovidApp.Data.DomainModel;
+using My.Data.DomainModel;
 using EntityFrameworkCore.DbContextScope;
 using Microsoft.EntityFrameworkCore;
 
