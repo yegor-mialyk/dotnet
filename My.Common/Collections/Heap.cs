@@ -12,15 +12,13 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
-namespace My.Collections
+namespace My.Common.Collections
 {
     [Serializable]
     public class Heap<T> : ICollection<T>
     {
         private const int DefaultCapacity = 8;
         private const uint MaxArrayLength = 0x7feffff;
-
-        private static readonly T[] emptyArray = new T[0];
 
         // ReSharper disable InconsistentNaming for serialization
         internal T[] _items;
@@ -34,7 +32,7 @@ namespace My.Collections
         {
             _comparer = comparer ?? Comparer<T>.Default;
             _heapType = heapType;
-            _items = emptyArray;
+            _items = Array.Empty<T>();
         }
 
         public Heap(int capacity, [AllowNull] IComparer<T>? comparer = null, HeapType heapType = HeapType.Min)
@@ -44,7 +42,7 @@ namespace My.Collections
 
             _comparer = comparer ?? Comparer<T>.Default;
             _heapType = heapType;
-            _items = capacity == 0 ? emptyArray : new T[capacity];
+            _items = capacity == 0 ? Array.Empty<T>() : new T[capacity];
         }
 
         public Heap([NotNull] IEnumerable<T> enumerable, [AllowNull] IComparer<T>? comparer = null,
@@ -63,7 +61,7 @@ namespace My.Collections
 
                     if (count == 0)
                     {
-                        _items = emptyArray;
+                        _items = Array.Empty<T>();
                         return;
                     }
 
@@ -76,7 +74,7 @@ namespace My.Collections
                     return;
             }
 
-            _items = emptyArray;
+            _items = Array.Empty<T>();
 
             foreach (var item in enumerable)
                 Add(item);
@@ -241,7 +239,7 @@ namespace My.Collections
         public T[] ToArray()
         {
             if (_size == 0)
-                return emptyArray;
+                return Array.Empty<T>();
 
             T[] array = new T[_size];
             Array.Copy(_items, array, _size);
