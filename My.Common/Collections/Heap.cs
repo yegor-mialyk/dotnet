@@ -282,6 +282,17 @@ namespace My.Common.Collections
             return top;
         }
 
+        public T Replace(T item)
+        {
+            var top = Peek();
+
+            _items[0] = item;
+
+            ShiftDown(0);
+
+            return top;
+        }
+
         protected void Heapify()
         {
             for (var i = _size / 2 - 1; i >= 0; i--)
