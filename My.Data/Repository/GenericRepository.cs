@@ -6,7 +6,6 @@
 // Licensed under the MIT License. See the LICENSE file for details.
 //
 
-using System;
 using System.Collections.Generic;
 using EntityFrameworkCore.DbContextScope;
 using Microsoft.EntityFrameworkCore;
@@ -19,28 +18,16 @@ namespace My.Data.Repository
     {
         private readonly IAmbientDbContextLocator _ambientDbContextLocator;
 
-        public GenericRepository(IAmbientDbContextLocator ambientDbContextLocator)
+        protected GenericRepository(IAmbientDbContextLocator ambientDbContextLocator)
         {
             _ambientDbContextLocator = ambientDbContextLocator;
         }
 
-        protected TDbContext DbContext
-        {
-            get
-            {
-                var dbContext = _ambientDbContextLocator.Get<TDbContext>();
-
-                if (dbContext == null)
-                    throw new InvalidOperationException(
-                        "No ambient DbContext found. The repository method has been called outside of the DbContextScope.");
-
-                return dbContext;
-            }
-        }
+        protected TDbContext DbContext => _ambientDbContextLocator.Get<TDbContext>();
 
         protected virtual DbSet<TEntity> DbSet => DbContext.Set<TEntity>();
 
-        public virtual TEntity GetById(TKey id)
+        public virtual TEntity? GetById(TKey id)
         {
             return DbSet.Find(id);
         }
@@ -59,7 +46,7 @@ namespace My.Data.Repository
         {
             DbSet.AddRange(entities);
         }
-        
+
         public virtual void Update(TEntity entity)
         {
             if (EqualityComparer<TKey>.Default.Equals(entity.Id, default))

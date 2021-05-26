@@ -13,7 +13,7 @@ namespace My.Data.Repository
 {
     public interface IRepository<TEntity, in TKey> where TEntity : class, IDomainObject<TKey>
     {
-        TEntity GetById(TKey id);
+        TEntity? GetById(TKey id);
 
         IEnumerable<TEntity> Get();
 
