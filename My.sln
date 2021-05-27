@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "My.Data", "My.Data\My.Data.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "My.Common", "My.Common\My.Common.csproj", "{55A16F85-FE6A-4A7B-AAC6-7D8F06D9B3EC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbContextScope", "DbContextScope\DbContextScope.csproj", "{1950E905-7769-4190-871C-6035169F8BC1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbContextScope", "DbContextScope\EntityFrameworkCore.DbContextScope.csproj", "{1950E905-7769-4190-871C-6035169F8BC1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
