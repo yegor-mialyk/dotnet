@@ -1,15 +1,12 @@
 ﻿//
-// Min/MaxHeap Array Based Implementation
+// Heap Array Based Implementation
 //
-// Copyright (C) 1995-2021, Yegor Mialyk. All Rights Reserved.
+// Copyright (C) 1995-2022, Yegor Mialyk. All Rights Reserved.
 //
 // Licensed under the MIT License. See the LICENSE file for details.
 //
 
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 namespace My.Common.Collections
@@ -23,33 +20,28 @@ namespace My.Common.Collections
         // ReSharper disable InconsistentNaming for serialization
         internal T[] _items;
         internal int _size;
-        internal readonly HeapType _heapType;
 
         internal readonly IComparer<T> _comparer;
         // ReSharper enable InconsistentNaming
 
-        public Heap([AllowNull] IComparer<T>? comparer = null, HeapType heapType = HeapType.Min)
+        public Heap(IComparer<T>? comparer = null)
         {
             _comparer = comparer ?? Comparer<T>.Default;
-            _heapType = heapType;
             _items = Array.Empty<T>();
         }
 
-        public Heap(int capacity, [AllowNull] IComparer<T>? comparer = null, HeapType heapType = HeapType.Min)
+        public Heap(int capacity, IComparer<T>? comparer = null)
         {
             if (capacity < 0)
                 throw new ArgumentOutOfRangeException(nameof(capacity));
 
             _comparer = comparer ?? Comparer<T>.Default;
-            _heapType = heapType;
             _items = capacity == 0 ? Array.Empty<T>() : new T[capacity];
         }
 
-        public Heap([NotNull] IEnumerable<T> enumerable, [AllowNull] IComparer<T>? comparer = null,
-            HeapType heapType = HeapType.Min)
+        public Heap(IEnumerable<T> enumerable, IComparer<T>? comparer = null)
         {
             _comparer = comparer ?? Comparer<T>.Default;
-            _heapType = heapType;
 
             switch (enumerable)
             {
@@ -103,8 +95,6 @@ namespace My.Common.Collections
         public int Count => _size;
 
         bool ICollection<T>.IsReadOnly => false;
-
-        public HeapType HeapType => _heapType;
 
         public T this[int index]
         {
@@ -192,12 +182,13 @@ namespace My.Common.Collections
                 _items[_size] = default!;
         }
 
-        public void AddRange([NotNull] IEnumerable<T> enumerable)
+        public void AddRange(IEnumerable<T> enumerable)
         {
             switch (enumerable)
             {
                 case null:
                     throw new ArgumentNullException(nameof(enumerable));
+
                 case ICollection<T> collection:
                     var count = collection.Count;
 
@@ -241,7 +232,7 @@ namespace My.Common.Collections
             if (_size == 0)
                 return Array.Empty<T>();
 
-            T[] array = new T[_size];
+            var array = new T[_size];
             Array.Copy(_items, array, _size);
             return array;
         }
@@ -284,6 +275,9 @@ namespace My.Common.Collections
 
         public T Replace(T item)
         {
+            if (_size == 0)
+                return item;
+
             var top = Peek();
 
             _items[0] = item;
@@ -311,9 +305,7 @@ namespace My.Common.Collections
                 if (Compare(parent, index) <= 0)
                     return;
 
-                var n = _items[parent];
-                _items[parent] = _items[index];
-                _items[index] = n;
+                (_items[parent], _items[index]) = (_items[index], _items[parent]);
 
                 index = parent;
             }
@@ -337,15 +329,13 @@ namespace My.Common.Collections
                 if (index == parent)
                     break;
 
-                var n = _items[parent];
-                _items[parent] = _items[index];
-                _items[index] = n;
+                (_items[parent], _items[index]) = (_items[index], _items[parent]);
             }
         }
 
         protected int Compare(int index1, int index2)
         {
-            return _comparer.Compare(_items[index1], _items[index2]) * (int)_heapType;
+            return _comparer.Compare(_items[index1], _items[index2]);
         }
 
         public struct HeapEnumerator : IEnumerator<T>
@@ -388,11 +378,5 @@ namespace My.Common.Collections
                 Current = default!;
             }
         }
-    }
-
-    public enum HeapType
-    {
-        Min = 1,
-        Max = -1
     }
 }

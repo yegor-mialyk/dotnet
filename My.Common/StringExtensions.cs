@@ -1,4 +1,12 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿//
+// String Extensions
+//
+// Copyright (C) 1995-2022, Yegor Mialyk. All Rights Reserved.
+//
+// Licensed under the MIT License. See the LICENSE file for details.
+//
+
+using System.Diagnostics.CodeAnalysis;
 
 namespace My.Common
 {
