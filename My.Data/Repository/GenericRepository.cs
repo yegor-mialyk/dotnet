@@ -8,7 +8,8 @@
 
 using EntityFrameworkCore.DbContextScope;
 using Microsoft.EntityFrameworkCore;
-using My.Data.DomainModel;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Scm.Data.DomainModel;
 
 namespace My.Data.Repository;
 
@@ -26,44 +27,54 @@ public class GenericRepository<TEntity, TKey, TDbContext> : IRepository<TEntity,
 
     protected DbSet<TEntity> DbSet => DbContext.Set<TEntity>();
 
-    public virtual TEntity? GetById(TKey id)
+    public TEntity? GetById(TKey id)
     {
-        return DbSet.Find(id);
+        return DbContext.Find<TEntity>(id);
+    }
+    
+    public EntityEntry<TEntity> Entry(TEntity entity)
+    {
+        return DbContext.Entry(entity);
     }
 
-    public virtual IQueryable<TEntity> Get()
+    public IQueryable<TEntity> Get()
     {
         return DbSet;
     }
 
     public void Add(TEntity entity)
     {
-        DbSet.Add(entity);
+        DbContext.Add(entity);
+    }
+    
+    public void Attach(TEntity entity)
+    {
+        DbContext.Attach(entity);
     }
 
     public void AddRange(IEnumerable<TEntity> entities)
     {
-        DbSet.AddRange(entities);
+        DbContext.AddRange(entities);
     }
 
     public void Update(TEntity entity)
     {
         if (EqualityComparer<TKey>.Default.Equals(entity.Id, default))
         {
-            Add(entity);
+            DbContext.Add(entity);
             return;
         }
 
         var entry = DbContext.Entry(entity);
         
         if (entry.State == EntityState.Detached)
-            DbSet.Attach(entity);
+            DbContext.Attach(entity);
 
         entry.State = EntityState.Modified;
     }
 
     public void Delete(TEntity entity)
     {
-        DbSet.Remove(entity);
+        DbContext.Remove(entity);
     }
 }
