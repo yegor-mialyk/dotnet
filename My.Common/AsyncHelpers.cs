@@ -1,46 +1,45 @@
 ﻿//
 // Async Helpers
 //
-// Copyright (C) 1995-2022, Yegor Mialyk. All Rights Reserved.
+// Copyright (C) 1995-2023, Yegor Mialyk. All Rights Reserved.
 //
 // Licensed under the MIT License. See the LICENSE file for details.
 //
 
 using System.Globalization;
 
-namespace My.Common
+namespace My.Common;
+
+public static class AsyncHelpers
 {
-    public static class AsyncHelpers
+    private static readonly TaskFactory taskFactory = new(CancellationToken.None,
+        TaskCreationOptions.None, TaskContinuationOptions.None, TaskScheduler.Default);
+
+    public static TResult RunSync<TResult>(Func<Task<TResult>> func)
     {
-        private static readonly TaskFactory taskFactory = new(CancellationToken.None,
-            TaskCreationOptions.None, TaskContinuationOptions.None, TaskScheduler.Default);
+        var currentCulture = CultureInfo.CurrentCulture;
+        var currentUiCulture = CultureInfo.CurrentUICulture;
 
-        public static TResult RunSync<TResult>(Func<Task<TResult>> func)
+        return taskFactory.StartNew(() =>
         {
-            var currentCulture = CultureInfo.CurrentCulture;
-            var currentUiCulture = CultureInfo.CurrentUICulture;
+            Thread.CurrentThread.CurrentCulture = currentCulture;
+            Thread.CurrentThread.CurrentUICulture = currentUiCulture;
 
-            return taskFactory.StartNew(() =>
-            {
-                Thread.CurrentThread.CurrentCulture = currentCulture;
-                Thread.CurrentThread.CurrentUICulture = currentUiCulture;
+            return func();
+        }).Unwrap().GetAwaiter().GetResult();
+    }
 
-                return func();
-            }).Unwrap().GetAwaiter().GetResult();
-        }
+    public static void RunSync(Func<Task> func)
+    {
+        var currentCulture = CultureInfo.CurrentCulture;
+        var currentUiCulture = CultureInfo.CurrentUICulture;
 
-        public static void RunSync(Func<Task> func)
+        taskFactory.StartNew(() =>
         {
-            var currentCulture = CultureInfo.CurrentCulture;
-            var currentUiCulture = CultureInfo.CurrentUICulture;
+            Thread.CurrentThread.CurrentCulture = currentCulture;
+            Thread.CurrentThread.CurrentUICulture = currentUiCulture;
 
-            taskFactory.StartNew(() =>
-            {
-                Thread.CurrentThread.CurrentCulture = currentCulture;
-                Thread.CurrentThread.CurrentUICulture = currentUiCulture;
-
-                return func();
-            }).Unwrap().GetAwaiter().GetResult();
-        }
+            return func();
+        }).Unwrap().GetAwaiter().GetResult();
     }
 }
