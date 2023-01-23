@@ -8,7 +8,7 @@
 
 namespace My.Data.DomainModel;
 
-public interface IDomainObject<TKey>
+public interface IDomainObject<TKey> where TKey : struct
 {
     TKey Id { get; set; }
 }

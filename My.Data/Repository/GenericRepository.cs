@@ -14,7 +14,9 @@ using Scm.Data.DomainModel;
 namespace My.Data.Repository;
 
 public class GenericRepository<TEntity, TKey, TDbContext> : IRepository<TEntity, TKey>
-    where TEntity : class, IDomainObject<TKey> where TDbContext : DbContext
+    where TEntity : class, IDomainObject<TKey>
+    where TDbContext : DbContext
+    where TKey : struct
 {
     private readonly IAmbientDbContextLocator _ambientDbContextLocator;
 
@@ -29,7 +31,7 @@ public class GenericRepository<TEntity, TKey, TDbContext> : IRepository<TEntity,
 
     public TEntity? GetById(TKey id)
     {
-        return DbContext.Find<TEntity>(id);
+        return DbSet.FirstOrDefault(entity => entity.Id.Equals(id));
     }
     
     public EntityEntry<TEntity> Entry(TEntity entity)
@@ -67,10 +69,16 @@ public class GenericRepository<TEntity, TKey, TDbContext> : IRepository<TEntity,
 
         var entry = DbContext.Entry(entity);
         
-        if (entry.State == EntityState.Detached)
-            DbContext.Attach(entity);
-
-        entry.State = EntityState.Modified;
+        switch (entry.State)
+        {
+            case EntityState.Detached:
+                DbContext.Attach(entity);
+                entry.State = EntityState.Modified;
+                return;
+            case EntityState.Unchanged:
+                entry.State = EntityState.Modified;
+                break;
+        }
     }
 
     public void Delete(TEntity entity)

@@ -11,7 +11,7 @@ using My.Data.DomainModel;
 
 namespace My.Data.Repository;
 
-public interface IRepository<TEntity, in TKey> where TEntity : class, IDomainObject<TKey>
+public interface IRepository<TEntity, in TKey> where TEntity : class, IDomainObject<TKey> where TKey : struct
 {
     TEntity? GetById(TKey id);
 
