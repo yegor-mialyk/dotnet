@@ -12,10 +12,9 @@ namespace My.Common;
 
 public static class AsyncHelpers
 {
-    private static readonly TaskFactory taskFactory = new(CancellationToken.None,
-        TaskCreationOptions.None, TaskContinuationOptions.None, TaskScheduler.Default);
+    private static readonly TaskFactory taskFactory = new(TaskScheduler.Default);
 
-    public static TResult RunSync<TResult>(Func<Task<TResult>> func)
+    public static TResult RunSync<TResult>(this Task<TResult> task, CancellationToken cancellationToken = default)
     {
         var currentCulture = CultureInfo.CurrentCulture;
         var currentUiCulture = CultureInfo.CurrentUICulture;
@@ -25,11 +24,11 @@ public static class AsyncHelpers
             Thread.CurrentThread.CurrentCulture = currentCulture;
             Thread.CurrentThread.CurrentUICulture = currentUiCulture;
 
-            return func();
-        }).Unwrap().GetAwaiter().GetResult();
+            return task;
+        }, cancellationToken).Unwrap().GetAwaiter().GetResult();
     }
 
-    public static void RunSync(Func<Task> func)
+    public static void RunSync(this Task task, CancellationToken cancellationToken = default)
     {
         var currentCulture = CultureInfo.CurrentCulture;
         var currentUiCulture = CultureInfo.CurrentUICulture;
@@ -39,7 +38,7 @@ public static class AsyncHelpers
             Thread.CurrentThread.CurrentCulture = currentCulture;
             Thread.CurrentThread.CurrentUICulture = currentUiCulture;
 
-            return func();
-        }).Unwrap().GetAwaiter().GetResult();
+            return task;
+        }, cancellationToken).Unwrap().GetAwaiter().GetResult();
     }
 }
