@@ -11,7 +11,7 @@ using My.Data.DomainModel;
 
 namespace My.Data.Repository;
 
-public interface IRepository<TEntity, in TKey> where TEntity : class, IDomainObject<TKey> where TKey : struct
+public interface IRepository<TEntity, in TKey> where TEntity : class, IEntityObject<TKey> where TKey : struct
 {
     TEntity? GetById(TKey id);
 
@@ -28,4 +28,6 @@ public interface IRepository<TEntity, in TKey> where TEntity : class, IDomainObj
     void Update(TEntity entity);
     
     void Delete(TEntity entity);
+
+    void DeleteRange(IEnumerable<TEntity> entities);
 }

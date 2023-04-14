@@ -9,12 +9,12 @@
 using EntityFrameworkCore.DbContextScope;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Scm.Data.DomainModel;
+using My.Data.DomainModel;
 
 namespace My.Data.Repository;
 
 public class GenericRepository<TEntity, TKey, TDbContext> : IRepository<TEntity, TKey>
-    where TEntity : class, IDomainObject<TKey>
+    where TEntity : class, IEntityObject<TKey>
     where TDbContext : DbContext
     where TKey : struct
 {
@@ -84,5 +84,10 @@ public class GenericRepository<TEntity, TKey, TDbContext> : IRepository<TEntity,
     public void Delete(TEntity entity)
     {
         DbContext.Remove(entity);
+    }
+
+    public void DeleteRange(IEnumerable<TEntity> entities)
+    {
+        DbContext.RemoveRange(entities);
     }
 }
