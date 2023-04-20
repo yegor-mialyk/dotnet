@@ -22,6 +22,16 @@ public static class StringExtensions
         return long.TryParse(s, out var result) ? result : defaultValue;
     }
 
+    public static double ToDouble(this string? s, double defaultValue = 0)
+    {
+        return double.TryParse(s, out var result) ? result : defaultValue;
+    }
+
+    public static decimal ToDecimal(this string? s, decimal defaultValue = 0)
+    {
+        return decimal.TryParse(s, out var result) ? result : defaultValue;
+    }
+
     public static bool IsNullOrEmpty([NotNullWhen(false)] this string? value)
     {
         return string.IsNullOrEmpty(value);
