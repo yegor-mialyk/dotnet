@@ -23,13 +23,18 @@ public static class ValidationSummaryHelpers
         var sb = new StringBuilder();
 
         if (htmlHelper.ViewData.ModelState.TryGetValue("info", out var value))
-            foreach (var message in value.Errors.Select(error => error.ErrorMessage).Where(s => !s.IsNullOrEmpty()))
-                sb.AppendLine($@"<div class=""alert alert-success"" role=""alert"">{message}</div>");
+            GenerateMessage(false);
 
         if (htmlHelper.ViewData.ModelState.TryGetValue(htmlHelper.ViewData.TemplateInfo.HtmlFieldPrefix, out value))
-            foreach (var message in value.Errors.Select(error => error.ErrorMessage).Where(s => !s.IsNullOrEmpty()))
-                sb.AppendLine($@"<div class=""alert alert-danger"" role=""alert"">{message}</div>");
+            GenerateMessage(true);
 
         return new HtmlString(sb.ToString());
+
+        void GenerateMessage(bool isError)
+        {
+            foreach (var message in value.Errors.Select(error => error.ErrorMessage).Where(s => !s.IsNullOrEmpty()))
+                sb.AppendLine(
+                    $"""<div class="alert alert-{(isError ? "danger" : "success")}" role="alert">{message}</div>""");
+        }
     }
 }
