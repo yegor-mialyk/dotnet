@@ -19,10 +19,10 @@ public static class TypeExtensions
                type.GetGenericArguments()[0] == typeof(T);
     }
 
-    public static IDictionary<string, string> ToDictionary<T>(this T type)
+    public static IDictionary<string, string> ToDictionary(this object obj)
     {
-        return typeof(T).GetFields(BindingFlags.Static | BindingFlags.Public)
-            .ToDictionary(field => field.GetValue(type)?.ToString() ?? string.Empty,
+        return obj.GetType().GetFields(BindingFlags.Static | BindingFlags.Public)
+            .ToDictionary(field => field.GetValue(obj)?.ToString() ?? string.Empty,
                 field => field.GetCustomAttributes<DisplayAttribute>(false).FirstOrDefault()?.Name ?? field.Name);
     }
 }
