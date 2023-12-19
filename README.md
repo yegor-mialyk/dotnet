@@ -1,4 +1,4 @@
-# My .NET 7+ Helper Classes
+# My .NET 8+ Helper Classes
 
 [![License](https://img.shields.io/badge/License-MIT-brightgreen.svg?style=plastic)](LICENSE)
 [![Issues](https://img.shields.io/github/issues-raw/yegor-mialyk/dotnet.svg?style=plastic)](https://github.com/yegor-mialyk/dotnet/issues)
