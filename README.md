@@ -1,4 +1,4 @@
-# My .NET 8+ Helper Classes
+# My .NET 9+ Code Snippets and Helper Classes
 
 [![License](https://img.shields.io/badge/License-MIT-brightgreen.svg?style=plastic)](LICENSE)
 [![Issues](https://img.shields.io/github/issues-raw/yegor-mialyk/dotnet.svg?style=plastic)](https://github.com/yegor-mialyk/dotnet/issues)
@@ -9,6 +9,6 @@ File an issue or request a new feature in [GitHub Issues](https://github.com/yeg
 
 ## License
 
-Copyright (C) 1995-2023 Yegor Mialyk. All Rights Reserved.
+Copyright (C) 1995-2025 Yegor Mialyk. All Rights Reserved.
 
 Licensed under the [MIT](LICENSE) License.

@@ -1,7 +1,7 @@
 ﻿//
 // Trim String Field Model Binder
 //
-// Copyright (C) 1995-2023, Yegor Mialyk. All Rights Reserved.
+// Copyright (C) 1995-2025, Yegor Mialyk. All Rights Reserved.
 //
 // Licensed under the MIT License. See the LICENSE file for details.
 //
@@ -11,7 +11,7 @@ using My.Common;
 
 namespace My.Web.Binders;
 
-public class TrimStringModelBinder : IModelBinder
+public sealed class TrimStringModelBinder : IModelBinder
 {
     public Task BindModelAsync(ModelBindingContext bindingContext)
     {

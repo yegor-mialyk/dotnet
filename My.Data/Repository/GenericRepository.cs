@@ -31,7 +31,12 @@ public class GenericRepository<TEntity, TKey, TDbContext> : IRepository<TEntity,
 
     public TEntity? GetById(TKey id)
     {
-        return DbSet.FirstOrDefault(entity => entity.Id.Equals(id));
+        return DbSet.Find(id);
+    }
+
+    public ValueTask<TEntity?> GetByIdAsync(TKey id)
+    {
+        return DbSet.FindAsync(id);
     }
     
     public EntityEntry<TEntity> Entry(TEntity entity)
@@ -44,9 +49,14 @@ public class GenericRepository<TEntity, TKey, TDbContext> : IRepository<TEntity,
         return DbSet;
     }
 
-    public void Add(TEntity entity)
+    public EntityEntry<TEntity> Add(TEntity entity)
     {
-        DbContext.Add(entity);
+        return DbContext.Add(entity);
+    }
+
+    public ValueTask<EntityEntry<TEntity>> AddAsync(TEntity entity)
+    {
+        return DbContext.AddAsync(entity);
     }
     
     public void Attach(TEntity entity)
@@ -59,6 +69,11 @@ public class GenericRepository<TEntity, TKey, TDbContext> : IRepository<TEntity,
         DbContext.AddRange(entities);
     }
 
+    public Task AddRangeAsync(IEnumerable<TEntity> entities)
+    {
+        return DbContext.AddRangeAsync(entities);
+    }
+
     public void Update(TEntity entity)
     {
         if (EqualityComparer<TKey>.Default.Equals(entity.Id, default))
@@ -67,23 +82,12 @@ public class GenericRepository<TEntity, TKey, TDbContext> : IRepository<TEntity,
             return;
         }
 
-        var entry = DbContext.Entry(entity);
-        
-        switch (entry.State)
-        {
-            case EntityState.Detached:
-                DbContext.Attach(entity);
-                entry.State = EntityState.Modified;
-                return;
-            case EntityState.Unchanged:
-                entry.State = EntityState.Modified;
-                break;
-        }
+        DbContext.Entry(entity).State = EntityState.Modified;
     }
 
-    public void Delete(TEntity entity)
+    public EntityEntry<TEntity> Delete(TEntity entity)
     {
-        DbContext.Remove(entity);
+        return DbContext.Remove(entity);
     }
 
     public void DeleteRange(IEnumerable<TEntity> entities)
